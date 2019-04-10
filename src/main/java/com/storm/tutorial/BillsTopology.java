@@ -37,8 +37,10 @@ public class BillsTopology {
     TopologyBuilder builder = new TopologyBuilder();
     builder.setSpout("Kafka-Spout", new KafkaSpout(kafkaSpoutConfig));
     builder.setBolt("BillsBolt", new BillsBolt()).shuffleGrouping("Kafka-Spout");
-    builder.setBolt("SmsBolt", new SmsBolt()).allGrouping("BillsBolt");
-    builder.setBolt("EmailBolt", new EmailBolt()).allGrouping("BillsBolt");
+    builder.setBolt("SmsBoltStream", new SmsStreamBolt()).allGrouping("BillsBolt","smsStream");
+    builder.setBolt("EmailBoltStream", new EmailStreamBolt()).allGrouping("BillsBolt","emailStream");
+    builder.setBolt("EmailBolt", new EmailBolt()).allGrouping("EmailBoltStream");
+    builder.setBolt("SmsBolt", new SmsBolt()).allGrouping("SmsBoltStream");
 
     LocalCluster cluster = new LocalCluster();
     cluster.submitTopology("TestingTopology", config, builder.createTopology());

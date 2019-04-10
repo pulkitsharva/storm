@@ -10,8 +10,7 @@ import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
 import org.apache.storm.tuple.Values;
 
-public class BillsBolt extends BaseRichBolt {
-
+public class EmailStreamBolt   extends BaseRichBolt {
   private OutputCollector outputCollector;
   private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -19,13 +18,13 @@ public class BillsBolt extends BaseRichBolt {
     this.outputCollector = outputCollector;
   }
 
+
   public void execute(Tuple tuple) {
     String body = tuple.getString(0);
     try{
       DataDTO dto = objectMapper.readValue(body, DataDTO.class);
-      System.out.println("Received data in BillsBolt:"+dto+", passing it to Email/SMS Bolt");
-      outputCollector.emit("smsStream", new Values(body,tuple.getMessageId()));
-      outputCollector.emit("emailStream",new Values(body));
+      System.out.println("Received data in EmailBoltStream:"+dto);
+      outputCollector.emit(tuple,new Values(body));
       outputCollector.ack(tuple);
     }
     catch(Exception e){
@@ -35,8 +34,7 @@ public class BillsBolt extends BaseRichBolt {
     }
   }
 
-  public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-    outputFieldsDeclarer.declareStream("smsStream", new Fields("sample","msgId"));
-    outputFieldsDeclarer.declareStream("emailStream", new Fields("sample"));
+  public void declareOutputFields(OutputFieldsDeclarer declarer) {
+    declarer.declare(new Fields("sample"));
   }
 }
