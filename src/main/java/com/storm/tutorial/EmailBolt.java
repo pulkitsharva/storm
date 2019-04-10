@@ -19,7 +19,7 @@ public class EmailBolt implements IRichBolt {
   public void execute(Tuple tuple) {
     String body = tuple.getString(0);
     try{
-      DataDTO dto = objectMapper.readValue(body, DataDTO.class);
+      AccountDTO dto = objectMapper.readValue(body, AccountDTO.class);
       System.out.println("Received data in EmailBolt:"+dto);
       outputCollector.ack(tuple);
     }

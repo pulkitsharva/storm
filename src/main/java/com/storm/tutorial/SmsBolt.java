@@ -19,19 +19,16 @@ public class SmsBolt extends BaseRichBolt {
   }
 
   public void execute(Tuple tuple) {
-    String t =tuple.getStringByField("sample");
     String body = tuple.getString(0);
     try{
-      DataDTO dto = objectMapper.readValue(body, DataDTO.class);
-      Long time = new Date().getTime();
-      System.out.println("Received data in SmsBolt:"+dto+",time:"+time +", tuple"+tuple.getSourceStreamId()+","+tuple.getMessageId());
-      if(time%2 ==0){
-        System.err.println("Manually throwing error:"+dto);
-//        Tuple tuple1 = tuple
+      AccountDTO dto = objectMapper.readValue(body, AccountDTO.class);
+      System.out.println("Received data in SmsBolt:"+dto);
+      if(dto.getShouldFailAtSms()){
         this.outputCollector.fail(tuple);
       }
-      else{
-        outputCollector.ack(tuple);
+      else {
+        this.outputCollector.ack(tuple);
+
       }
     }
     catch(Exception e){

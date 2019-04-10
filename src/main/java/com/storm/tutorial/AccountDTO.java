@@ -7,9 +7,10 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class DataDTO {
+public class AccountDTO {
 
-  private Integer num;
+  private Boolean shouldFailAtAccount;
+  private Boolean shouldFailAtSms;
   private String status;
 
 
