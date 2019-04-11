@@ -7,7 +7,9 @@ import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.base.BaseRichBolt;
+import org.apache.storm.tuple.Fields;
 import org.apache.storm.tuple.Tuple;
+import org.apache.storm.tuple.Values;
 
 public class SmsBolt extends BaseRichBolt {
 
@@ -27,6 +29,7 @@ public class SmsBolt extends BaseRichBolt {
         this.outputCollector.fail(tuple);
       }
       else {
+        this.outputCollector.emit(new Values(body,"random"));
         this.outputCollector.ack(tuple);
 
       }
@@ -39,6 +42,6 @@ public class SmsBolt extends BaseRichBolt {
   }
 
   public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-
+    outputFieldsDeclarer.declare(new Fields("key","word"));
   }
 }
